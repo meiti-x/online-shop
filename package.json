@@ -23,8 +23,8 @@
   },
   "lint-staged": {
   "**/*.{ts,js}": [
-    "eslint --fix",
-    "prettier --write"
+    "npx eslint --fix",
+    "npx prettier --write"
   ]
 }
 }
