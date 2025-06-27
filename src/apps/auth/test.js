@@ -1,3 +1,3 @@
 const a = 'asdf';
 
-console.log(a);
+console.log('sdfsdfsdf', a);
