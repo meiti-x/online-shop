@@ -11,12 +11,13 @@
 
     "baseUrl": "./src",
     "paths": {
-      "@utils/*": ["src/utils/*"],
-      "@middlewares/*": ["src/middlewares/*"],
-      "@configs/*": ["src/configs/*"],
-      "@types/*": ["src/types/*"],
-      "@auth/*": ["src/apps/auth/*"],
-      "@profile/*": ["src/apps/profile/*"]
+      "@utils/*": ["utils/*"],
+      "@middlewares/*": ["middlewares/*"],
+      "@configs/*": ["configs/*"],
+      "@types/*": ["types/*"],
+      "@auth/*": ["apps/auth/*"],
+      "@profile/*": ["apps/profile/*"],
+      "@/*": ["*"]
     },
 
     "types": ["node"],

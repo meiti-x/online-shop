@@ -8,7 +8,6 @@ module.exports = {
   parserOptions: {
     ecmaVersion: 'latest',
     sourceType: 'module',
-    // project: './tsconfig.json',
   },
   plugins: ['@typescript-eslint', 'prettier'],
   rules: {
@@ -19,6 +18,10 @@ module.exports = {
   },
   settings: {
     'import/resolver': {
+      typescript: {
+        project: './tsconfig.json',
+        alwaysTryTypes: true,
+      },
       node: {
         extensions: ['.js', '.ts'],
       },
