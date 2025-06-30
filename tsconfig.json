@@ -14,7 +14,7 @@
       "@utils/*": ["utils/*"],
       "@middlewares/*": ["middlewares/*"],
       "@configs/*": ["configs/*"],
-      "@types/*": ["types/*"],
+      "@types": ["types"],
       "@auth/*": ["apps/auth/*"],
       "@profile/*": ["apps/profile/*"],
       "@/*": ["*"]

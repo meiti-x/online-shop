@@ -1,5 +1,5 @@
 import { PrismaClient } from '@prisma/client';
-import { ModelMap, Database } from '../../types/database';
+import { ModelMap, Database } from '../../types/Database';
 
 export class PrismaDatabase implements Database {
   private prisma = new PrismaClient();

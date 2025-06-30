@@ -1,16 +1,15 @@
 import { appConfig } from '@/core/configs';
 import express, { Express, Request, Response } from 'express';
 import { StatusCodes } from 'http-status-codes';
-import { prisma } from './core/database/prisma';
+import { getLogger } from './core/logger';
 
 async function initializeAPP() {
   const config = appConfig;
   const app: Express = express();
-
-  const users = await prisma.user.findMany();
-  console.log({ users });
+  const logger = getLogger();
 
   app.get('/health', (_req: Request, res: Response) => {
+    logger.info('healthy');
     res.status(StatusCodes.OK).json({
       status: 'healthy',
       timestamp: new Date().toISOString(),
