@@ -1,10 +1,14 @@
-import { appConfig } from '@utils/configs';
+import { appConfig } from '@/core/configs';
 import express, { Express, Request, Response } from 'express';
 import { StatusCodes } from 'http-status-codes';
+import { prisma } from './core/database/prisma';
 
-function initializeAPP() {
+async function initializeAPP() {
   const config = appConfig;
   const app: Express = express();
+
+  const users = await prisma.user.findMany();
+  console.log({ users });
 
   app.get('/health', (_req: Request, res: Response) => {
     res.status(StatusCodes.OK).json({
