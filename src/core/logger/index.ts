@@ -2,6 +2,7 @@ import { createLogger, format, transports } from 'winston';
 import 'winston-daily-rotate-file';
 import path from 'path';
 import type { ILogger } from '@types';
+import { loggerContext } from './logger.context';
 
 const dailyRotateTransport = new transports.DailyRotateFile({
   dirname: path.join(__dirname, '../../logs'),
@@ -13,9 +14,20 @@ const dailyRotateTransport = new transports.DailyRotateFile({
   level: 'info',
 });
 
+const contextFormat = format((info) => {
+  const context = loggerContext.getStore();
+
+  // eslint-disable-next-line no-param-reassign
+  if (context?.userId) info.userId = context.userId;
+  // eslint-disable-next-line no-param-reassign
+  if (context?.requestId) info.requestId = context.requestId;
+  return info;
+});
+
 const loggerInstance = createLogger({
   level: 'info',
   format: format.combine(
+    contextFormat(),
     format.timestamp({ format: 'YYYY-MM-DD HH:mm:ss' }),
     format.errors({ stack: true }),
     format.json()
