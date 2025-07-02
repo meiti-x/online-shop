@@ -1,7 +1,7 @@
 import { appConfig } from '@/core/configs';
 import express, { Express, Request, Response } from 'express';
 import { StatusCodes } from 'http-status-codes';
-import { withAuth } from '@middlewares/auth';
+import { withLogger } from '@middlewares/auth';
 import { getLogger } from './core/logger';
 
 async function initializeAPP() {
@@ -9,8 +9,11 @@ async function initializeAPP() {
   const app: Express = express();
   const logger = getLogger();
 
-  app.get('/health', withAuth, (req: Request, res: Response) => {
-    logger.info('healthy');
+  app.use(withLogger);
+
+  app.get('/health', (req: Request, res: Response) => {
+    const error = new Error('test');
+    logger.error('healthy', error);
     res.status(StatusCodes.OK).json({
       status: 'healthy',
       timestamp: new Date().toISOString(),

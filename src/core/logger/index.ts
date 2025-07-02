@@ -1,3 +1,4 @@
+/* eslint-disable no-param-reassign */
 import { createLogger, format, transports } from 'winston';
 import 'winston-daily-rotate-file';
 import path from 'path';
@@ -17,10 +18,12 @@ const dailyRotateTransport = new transports.DailyRotateFile({
 const contextFormat = format((info) => {
   const context = loggerContext.getStore();
 
-  // eslint-disable-next-line no-param-reassign
   if (context?.userId) info.userId = context.userId;
-  // eslint-disable-next-line no-param-reassign
   if (context?.requestId) info.requestId = context.requestId;
+  if (context?.method) info.method = context.method;
+  if (context?.url) info.url = context.url;
+  if (context?.responseTime) info.responseTime = context.responseTime;
+
   return info;
 });
 
@@ -44,7 +47,15 @@ const loggerInstance = createLogger({
 if (process.env.NODE_ENV !== 'production') {
   loggerInstance.add(
     new transports.Console({
-      format: format.combine(format.colorize(), format.simple()),
+      format: format.combine(
+        format.colorize(),
+        format.timestamp({ format: 'YYYY-MM-DD HH:mm:ss' }),
+        format.printf((info) => {
+          const { timestamp, level, message, ...meta } = info;
+          // eslint-disable-next-line max-len
+          return `${timestamp} ${level}: ${message}\n${Object.keys(meta).length ? JSON.stringify(meta, null, 2) : ''}\n`;
+        })
+      ),
     })
   );
 }
