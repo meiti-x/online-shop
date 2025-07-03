@@ -1,8 +1,8 @@
 import { Request, Response } from 'express';
 import { StatusCodes } from 'http-status-codes';
-import { sendResponse } from '@/pkg/response';
+import { sendErrorResponse, sendResponse } from '@/pkg/response';
 import { authSignUpService } from '@auth/services/auth.service';
-import { CustomError } from '@/pkg/error';
+import { BadRequestError, CustomError } from '@/pkg/error';
 import { getLogger } from '@/core/logger';
 import { createUserSchema } from './dto/createUser.dto';
 
@@ -10,9 +10,9 @@ export function authSignUpController(req: Request, res: Response) {
   const result = createUserSchema.safeParse(req.body);
   const logger = getLogger();
   if (!result.success) {
-    sendResponse({
+    sendErrorResponse({
       res,
-      statusCode: StatusCodes.BAD_REQUEST,
+      err: new BadRequestError('please fix field errors'),
       fieldErrors: result.error.flatten().fieldErrors,
     });
     return;
@@ -31,11 +31,7 @@ export function authSignUpController(req: Request, res: Response) {
     .catch((err: CustomError) => {
       logger.error(err.message, err);
 
-      sendResponse({
-        res,
-        statusCode: err.statusCode,
-        message: err.message,
-      });
+      sendErrorResponse({ res, err });
     });
 }
 export function authSignInController(req: Request, res: Response) {

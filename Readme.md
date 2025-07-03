@@ -65,6 +65,7 @@ I’ve added **important comments and TODOs** throughout the code so you can eas
 - Prettier + ESLint config with Husky hooks
   - Git pre-commit validation
   - Auto-format and lint staged files
+- Custom Error
 
 ## 🚀 Getting Started
 
