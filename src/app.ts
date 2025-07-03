@@ -5,6 +5,7 @@ import { withLogger } from '@middlewares/logger';
 import { authRoutes } from '@auth/routes/auth.routes';
 import bodyParser from 'body-parser';
 import compression from 'compression';
+import timeout from 'connect-timeout';
 import { getLogger } from './core/logger';
 
 async function initializeAPP() {
@@ -12,8 +13,19 @@ async function initializeAPP() {
   const config = appConfig;
   const logger = getLogger();
 
+  // Set a 15-second timeout globally
+  app.use(timeout('5s'));
+
+  // TODO: i must worry about partial failure with redis
+  app.use((req, res, next) => {
+    if (!req.timedout) next();
+  });
+
+  app.use(withLogger);
+
   // parse application/json
   app.use(bodyParser.json());
+
   // compress or gzip body response
   // Compression can leak information about secret tokens (e.g. CSRF tokens) via side-channel attacks like BREACH.
   // Disable compression on sensitive routes (e.g. /csrf, /auth/login).
@@ -26,8 +38,6 @@ async function initializeAPP() {
       },
     })
   );
-
-  app.use(withLogger);
 
   // healthcheck
   app.get('/health', (_: Request, res: Response) => {
