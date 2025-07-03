@@ -11,6 +11,9 @@ importers:
       '@prisma/client':
         specifier: ^6.10.1
         version: 6.10.1(prisma@6.10.1(typescript@5.8.3))(typescript@5.8.3)
+      bcrypt:
+        specifier: ^6.0.0
+        version: 6.0.0
       body-parser:
         specifier: ^2.2.0
         version: 2.2.0
@@ -48,6 +51,9 @@ importers:
         specifier: ^4.4.2
         version: 4.4.2
     devDependencies:
+      '@types/bcrypt':
+        specifier: ^5.0.2
+        version: 5.0.2
       '@types/body-parser':
         specifier: ^1.19.6
         version: 1.19.6
@@ -244,6 +250,9 @@ packages:
 
   '@tybys/wasm-util@0.9.0':
     resolution: {integrity: sha512-6+7nlbMVX/PVDCwaIQ8nTOPveOcFLSt8GcXdx8hD0bt39uWxYT88uXzqTd4fTvqta7oeUJqudepapKNt2DYJFw==}
+
+  '@types/bcrypt@5.0.2':
+    resolution: {integrity: sha512-6atioO8Y75fNcbmj0G7UjI9lXN2pQ/IGJ2FWT4a/btd0Lk9lQalHLKhkgKVZ3r+spnmWUKfbMi1GEe9wyHQfNQ==}
 
   '@types/body-parser@1.19.6':
     resolution: {integrity: sha512-HLFeCYgz89uk22N5Qg3dvGvsv46B8GLvKKo1zKG4NybA8U2DiEO3w9lqGg29t/tfLRJpJ6iQxnVw4OnB7MoM9g==}
@@ -542,6 +551,10 @@ packages:
 
   balanced-match@1.0.2:
     resolution: {integrity: sha512-3oSeUO0TMV67hN1AmbXsK4yaqU7tjiHlbxRDZOpH0KW9+CeX4bRAaX0Anxt0tx2MrpRpWwQaPwIlISEJhYU5Pw==}
+
+  bcrypt@6.0.0:
+    resolution: {integrity: sha512-cU8v/EGSrnH+HnxV2z0J7/blxH8gq7Xh2JFT6Aroax7UohdmiJJlxApMxtKfuI7z68NvvVcmR78k2LbT6efhRg==}
+    engines: {node: '>= 18'}
 
   binary-extensions@2.3.0:
     resolution: {integrity: sha512-Ceh+7ox5qe7LJuLHoY0feh3pHuUDHAcRUeyL2VYghZwfpkNIy/+8Ocg0a3UuSoYzavmylwuLWQOf3hl0jjMMIw==}
@@ -1436,6 +1449,14 @@ packages:
     resolution: {integrity: sha512-8Ofs/AUQh8MaEcrlq5xOX0CQ9ypTF5dl78mjlMNfOK08fzpgTHQRQPBxcPlEtIw0yRpws+Zo/3r+5WRby7u3Gg==}
     engines: {node: '>= 0.6'}
 
+  node-addon-api@8.4.0:
+    resolution: {integrity: sha512-D9DI/gXHvVmjHS08SVch0Em8G5S1P+QWtU31appcKT/8wFSPRcdHadIFSAntdMMVM5zz+/DL+bL/gz3UDppqtg==}
+    engines: {node: ^18 || ^20 || >= 21}
+
+  node-gyp-build@4.8.4:
+    resolution: {integrity: sha512-LA4ZjwlnUblHVgq0oBF3Jl/6h/Nvs5fzBLwdEF4nuxnFdsfajde4WfxtJr3CaiH+F6ewcIB/q4jQ4UzPyid+CQ==}
+    hasBin: true
+
   normalize-path@3.0.0:
     resolution: {integrity: sha512-6eZs5Ls3WtCisHWp9S2GUy8dqkpGi4BVSz3GaqiE6ezub0512ESztXUwUB6C6IKbQkY2Pnb/mD4WYojCRwcwLA==}
     engines: {node: '>=0.10.0'}
@@ -2169,6 +2190,10 @@ snapshots:
       tslib: 2.8.1
     optional: true
 
+  '@types/bcrypt@5.0.2':
+    dependencies:
+      '@types/node': 24.0.4
+
   '@types/body-parser@1.19.6':
     dependencies:
       '@types/connect': 3.4.38
@@ -2488,6 +2513,11 @@ snapshots:
       possible-typed-array-names: 1.1.0
 
   balanced-match@1.0.2: {}
+
+  bcrypt@6.0.0:
+    dependencies:
+      node-addon-api: 8.4.0
+      node-gyp-build: 4.8.4
 
   binary-extensions@2.3.0: {}
 
@@ -3502,6 +3532,10 @@ snapshots:
   negotiator@0.6.4: {}
 
   negotiator@1.0.0: {}
+
+  node-addon-api@8.4.0: {}
+
+  node-gyp-build@4.8.4: {}
 
   normalize-path@3.0.0: {}
 
