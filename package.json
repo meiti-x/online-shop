@@ -45,6 +45,7 @@
   },
   "dependencies": {
     "@prisma/client": "^6.10.1",
+    "connect-timeout": "^1.9.0",
     "dotenv": "^16.6.0",
     "express": "^5.1.0",
     "http-status-codes": "^2.3.0",

@@ -1,7 +1,8 @@
 import { appConfig } from '@/core/configs';
 import express, { Express, Request, Response } from 'express';
 import { StatusCodes } from 'http-status-codes';
-import { withLogger } from '@middlewares/auth';
+import { withLogger } from '@middlewares/logger';
+import { authRoutes } from '@auth/routes/auth.routes';
 import { getLogger } from './core/logger';
 
 async function initializeAPP() {
@@ -11,7 +12,7 @@ async function initializeAPP() {
 
   app.use(withLogger);
 
-  app.get('/health', (req: Request, res: Response) => {
+  app.get('/health', (_: Request, res: Response) => {
     const error = new Error('test');
     logger.error('healthy', error);
     res.status(StatusCodes.OK).json({
@@ -21,7 +22,10 @@ async function initializeAPP() {
     });
   });
 
+  authRoutes(app);
+
   const { PORT } = config;
+
   app.listen(PORT, () => {
     console.log(`✅ Server running on http://localhost:${PORT}`);
   });
