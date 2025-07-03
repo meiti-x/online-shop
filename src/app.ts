@@ -6,8 +6,8 @@ import { authRoutes } from '@auth/routes/auth.routes';
 import { getLogger } from './core/logger';
 
 async function initializeAPP() {
-  const config = appConfig;
   const app: Express = express();
+  const config = appConfig;
   const logger = getLogger();
 
   app.use(withLogger);
