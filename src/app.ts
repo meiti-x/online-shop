@@ -10,6 +10,7 @@ import { getLogger } from '@/core/logger';
 import { setupSwagger } from '@/core/swagger';
 import { authRoutes } from '@auth/routes/auth.routes';
 import { withLogger } from '@middlewares/logger';
+import { withRateLimitMiddleware } from '@middlewares/ratelimmiter';
 
 async function initializeAPP() {
   const app: Express = express();
@@ -17,8 +18,10 @@ async function initializeAPP() {
   const logger = getLogger();
 
   setupSwagger(app);
+  // Apply the rate limiter globally (all routes)
+  app.use(withRateLimitMiddleware);
 
-  // Set a 15-second timeout globally
+  // Set a 5-second request timeout globally
   app.use(timeout('5s'));
 
   // TODO: i must worry about partial failure with redis
