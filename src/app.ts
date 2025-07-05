@@ -18,7 +18,7 @@ async function initializeAPP() {
   const logger = getLogger();
 
   setupSwagger(app);
-  // Apply the rate limiter globally (all routes)
+
   app.use(withRateLimitMiddleware);
 
   // Set a 5-second request timeout globally
@@ -32,7 +32,6 @@ async function initializeAPP() {
   app.use(cookieParser());
   app.use(withLogger);
 
-  // parse application/json
   app.use(bodyParser.json());
 
   // compress or gzip body response
@@ -48,7 +47,6 @@ async function initializeAPP() {
     })
   );
 
-  // healthcheck
   app.get('/health', (_: Request, res: Response) => {
     const error = new Error('test');
     logger.error('healthy', error);
