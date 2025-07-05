@@ -6,15 +6,17 @@ import express, { Express, Request, Response } from 'express';
 import { StatusCodes } from 'http-status-codes';
 
 import { appConfig } from '@/core/configs';
+import { getLogger } from '@/core/logger';
+import { setupSwagger } from '@/core/swagger';
 import { authRoutes } from '@auth/routes/auth.routes';
 import { withLogger } from '@middlewares/logger';
-
-import { getLogger } from './core/logger';
 
 async function initializeAPP() {
   const app: Express = express();
   const config = appConfig;
   const logger = getLogger();
+
+  setupSwagger(app);
 
   // Set a 15-second timeout globally
   app.use(timeout('5s'));

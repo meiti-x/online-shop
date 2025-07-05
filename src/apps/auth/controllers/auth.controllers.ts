@@ -7,11 +7,11 @@ import { generateAccessToken, generateRefreshToken, verifyRefreshToken } from '@
 import { sendErrorResponse, sendResponse } from '@/pkg/response';
 import { authRefreshService, authSignInService, authSignUpService } from '@auth/services/auth.service';
 
-import { createUserSchema } from './dto/createUser.dto';
-import { signInSchema } from './dto/signin.dto';
+import { createUserDto } from './dto/createUser.dto';
+import { signInDto } from './dto/signin.dto';
 
 export function authSignUpController(req: Request, res: Response) {
-  const result = createUserSchema.safeParse(req.body);
+  const result = createUserDto.safeParse(req.body);
   const logger = getLogger();
   if (!result.success) {
     sendErrorResponse({
@@ -54,7 +54,7 @@ export function authSignUpController(req: Request, res: Response) {
 }
 
 export async function authSignInController(req: Request, res: Response) {
-  const result = signInSchema.safeParse(req.body);
+  const result = signInDto.safeParse(req.body);
 
   if (!result.success) {
     res.status(StatusCodes.BAD_REQUEST).json({

@@ -1,7 +1,7 @@
 import { z } from 'zod';
 import zxcvbn from 'zxcvbn';
 
-export const createUserSchema = z.object({
+export const createUserDto = z.object({
   name: z.string().min(2, 'Name must be at least 2 characters long').max(50, 'Name must be at most 50 characters long'),
   email: z.string().email('Invalid email address'),
   password: z
@@ -20,4 +20,4 @@ export const createUserSchema = z.object({
     ),
 });
 
-export type CreateUserDto = z.infer<typeof createUserSchema>;
+export type CreateUserDtoType = z.infer<typeof createUserDto>;

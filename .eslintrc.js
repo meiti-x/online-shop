@@ -19,6 +19,7 @@ module.exports = {
       'error',
       {
         'ts-ignore': false,
+        'ts-nocheck': false,
       },
     ],
   },
