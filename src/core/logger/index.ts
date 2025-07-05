@@ -1,8 +1,10 @@
 /* eslint-disable no-param-reassign */
+import path from 'path';
 import { createLogger, format, transports } from 'winston';
 import 'winston-daily-rotate-file';
-import path from 'path';
+
 import type { ILogger } from '@types';
+
 import { loggerContext } from './logger.context';
 
 const dailyRotateTransport = new transports.DailyRotateFile({

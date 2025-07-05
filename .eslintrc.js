@@ -15,6 +15,12 @@ module.exports = {
     'import/prefer-default-export': 'off',
     'max-len': ['error', { code: 120 }],
     'prettier/prettier': 'error',
+    '@typescript-eslint/ban-ts-comment': [
+      'error',
+      {
+        'ts-ignore': false,
+      },
+    ],
   },
   settings: {
     'import/resolver': {

@@ -1,7 +1,8 @@
-import { getLogger } from '@/core/logger';
-import { loggerContext } from '@/core/logger/logger.context';
 import { NextFunction, Request, Response } from 'express';
 import { v4 as uuid } from 'uuid';
+
+import { getLogger } from '@/core/logger';
+import { loggerContext } from '@/core/logger/logger.context';
 
 export function withLogger(req: Request, res: Response, next: NextFunction) {
   const startTime = process.hrtime.bigint();

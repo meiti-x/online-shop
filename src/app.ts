@@ -1,11 +1,14 @@
-import { appConfig } from '@/core/configs';
-import express, { Express, Request, Response } from 'express';
-import { StatusCodes } from 'http-status-codes';
-import { withLogger } from '@middlewares/logger';
-import { authRoutes } from '@auth/routes/auth.routes';
 import bodyParser from 'body-parser';
 import compression from 'compression';
 import timeout from 'connect-timeout';
+import cookieParser from 'cookie-parser';
+import express, { Express, Request, Response } from 'express';
+import { StatusCodes } from 'http-status-codes';
+
+import { appConfig } from '@/core/configs';
+import { authRoutes } from '@auth/routes/auth.routes';
+import { withLogger } from '@middlewares/logger';
+
 import { getLogger } from './core/logger';
 
 async function initializeAPP() {
@@ -21,6 +24,7 @@ async function initializeAPP() {
     if (!req.timedout) next();
   });
 
+  app.use(cookieParser());
   app.use(withLogger);
 
   // parse application/json

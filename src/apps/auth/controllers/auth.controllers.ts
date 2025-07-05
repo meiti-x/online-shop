@@ -1,9 +1,12 @@
 import { Request, Response } from 'express';
 import { StatusCodes } from 'http-status-codes';
-import { sendErrorResponse, sendResponse } from '@/pkg/response';
-import { authSignInService, authSignUpService } from '@auth/services/auth.service';
-import { BadRequestError, CustomError } from '@/pkg/error';
+
 import { getLogger } from '@/core/logger';
+import { BadRequestError, CustomError, NotAuthorizedError } from '@/pkg/error';
+import { generateAccessToken, generateRefreshToken, verifyRefreshToken } from '@/pkg/jwt';
+import { sendErrorResponse, sendResponse } from '@/pkg/response';
+import { authRefreshService, authSignInService, authSignUpService } from '@auth/services/auth.service';
+
 import { createUserSchema } from './dto/createUser.dto';
 import { signInSchema } from './dto/signin.dto';
 
@@ -20,6 +23,20 @@ export function authSignUpController(req: Request, res: Response) {
   }
   authSignUpService(req.body)
     .then(() => {
+      res
+        .cookie('accessToken', generateAccessToken({ email: req.body.email }), {
+          httpOnly: true,
+          secure: process.env.NODE_ENV === 'production',
+          sameSite: 'strict',
+          maxAge: 15 * 60 * 1000, // 15 minutes
+        })
+        .cookie('refreshToken', generateRefreshToken({ email: req.body.email }), {
+          httpOnly: true,
+          secure: process.env.NODE_ENV === 'production',
+          sameSite: 'strict',
+          maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+        });
+
       sendResponse({
         res,
         statusCode: StatusCodes.CREATED,
@@ -48,6 +65,20 @@ export async function authSignInController(req: Request, res: Response) {
   try {
     const user = await authSignInService(req?.body.email, req?.body.password);
 
+    res
+      .cookie('accessToken', generateAccessToken({ email: req.body.email }), {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: 'strict',
+        maxAge: 15 * 60 * 1000, // 15 minutes
+      })
+      .cookie('refreshToken', generateRefreshToken({ email: req.body.email }), {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: 'strict',
+        maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+      });
+
     sendResponse({
       res,
       statusCode: StatusCodes.CREATED,
@@ -60,6 +91,45 @@ export async function authSignInController(req: Request, res: Response) {
     sendErrorResponse({
       res,
       err: new BadRequestError('invalid username or password'),
+    });
+  }
+}
+
+export async function authRefreshTokenController(req: Request, res: Response) {
+  const refreshToken = req.cookies?.refreshToken;
+
+  if (!refreshToken) {
+    res.status(StatusCodes.UNAUTHORIZED).json({ error: 'Missing refresh token' });
+  }
+
+  try {
+    const payload = verifyRefreshToken(String(refreshToken));
+    const { userId, email } = payload as { userId: number; email: string };
+
+    await authRefreshService(req?.body.email);
+
+    const newAccessToken = generateAccessToken({ userId, email });
+    const newRefreshToken = generateRefreshToken({ userId, email });
+
+    res
+      .cookie('accessToken', newAccessToken, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: 'strict',
+        maxAge: 15 * 60 * 1000,
+      })
+      .cookie('refreshToken', newRefreshToken, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: 'strict',
+        maxAge: 7 * 24 * 60 * 60 * 1000,
+      })
+      .status(StatusCodes.OK)
+      .json({ message: 'Tokens refreshed' });
+  } catch {
+    sendErrorResponse({
+      res,
+      err: new NotAuthorizedError('Invalid or expired refresh token'),
     });
   }
 }

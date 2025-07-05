@@ -18,6 +18,15 @@ export async function authSignUpService(user: Omit<User, 'id'>): Promise<User> {
   return newUser;
 }
 
+export async function authRefreshService(user: Omit<User, 'id'>): Promise<User> {
+  const existing = await authRepository.findByEmail(user.email);
+  if (!existing) {
+    throw new BadRequestError('Email not exist');
+  }
+
+  return existing;
+}
+
 export async function authSignInService(email: string, password: string) {
   const user = await authRepository.findByEmail(email);
 
