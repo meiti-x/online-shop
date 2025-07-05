@@ -1,5 +1,6 @@
 import { BadRequestError, NotAuthorizedError } from '@/pkg/error';
 import { comparePassword, hashPassword } from '@/pkg/hash';
+import { generateSnowflakeId } from '@/pkg/snowflake';
 import { authRepository } from '@auth/repository/auth.repository';
 import { User } from '@prisma/client';
 
@@ -12,6 +13,7 @@ export async function authSignUpService(user: Omit<User, 'id'>): Promise<User> {
   const hashedPassword = await hashPassword(user.password, 10);
   const newUser = await authRepository.createUser({
     ...user,
+    userId: generateSnowflakeId(),
     password: hashedPassword,
   });
 
