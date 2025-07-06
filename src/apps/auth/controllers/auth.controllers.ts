@@ -22,15 +22,15 @@ export function authSignUpController(req: Request, res: Response) {
     return;
   }
   authSignUpService(req.body)
-    .then(() => {
+    .then((response) => {
       res
-        .cookie('accessToken', generateAccessToken({ email: req.body.email }), {
+        .cookie('accessToken', generateAccessToken({ userId: response.userId, email: req.body.email }), {
           httpOnly: true,
           secure: process.env.NODE_ENV === 'production',
           sameSite: 'strict',
           maxAge: 15 * 60 * 1000, // 15 minutes
         })
-        .cookie('refreshToken', generateRefreshToken({ email: req.body.email }), {
+        .cookie('refreshToken', generateRefreshToken({ userId: response.userId, email: req.body.email }), {
           httpOnly: true,
           secure: process.env.NODE_ENV === 'production',
           sameSite: 'strict',
@@ -66,13 +66,13 @@ export async function authSignInController(req: Request, res: Response) {
     const user = await authSignInService(req?.body.email, req?.body.password);
 
     res
-      .cookie('accessToken', generateAccessToken({ email: req.body.email }), {
+      .cookie('accessToken', generateAccessToken({ userId: user.userId, email: req.body.email }), {
         httpOnly: true,
         secure: process.env.NODE_ENV === 'production',
         sameSite: 'strict',
         maxAge: 15 * 60 * 1000, // 15 minutes
       })
-      .cookie('refreshToken', generateRefreshToken({ email: req.body.email }), {
+      .cookie('refreshToken', generateRefreshToken({ userId: user.userId, email: req.body.email }), {
         httpOnly: true,
         secure: process.env.NODE_ENV === 'production',
         sameSite: 'strict',
@@ -81,7 +81,7 @@ export async function authSignInController(req: Request, res: Response) {
 
     sendResponse({
       res,
-      statusCode: StatusCodes.CREATED,
+      statusCode: StatusCodes.OK,
       data: {
         name: user?.name,
         email: user?.email,

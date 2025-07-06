@@ -1,13 +1,18 @@
 import { NextFunction, Request, Response } from 'express';
 import { StatusCodes } from 'http-status-codes';
-import jwt from 'jsonwebtoken';
+
+import { verifyAccessToken } from '@/pkg/jwt';
+import { Email } from '@/types/general';
 
 interface JwtPayload {
+  email: Email;
   userId: string;
+  iat: number;
+  exp: number;
 }
 
 export interface AuthenticatedRequest extends Request {
-  user?: { userId: string };
+  user?: { userId: string; email: string };
 }
 
 export function withAuth(req: AuthenticatedRequest, res: Response, next: NextFunction) {
@@ -19,14 +24,13 @@ export function withAuth(req: AuthenticatedRequest, res: Response, next: NextFun
   }
 
   try {
-    const payload = jwt.verify(token, process.env.JWT_SECRET!) as JwtPayload;
-
-    if (!payload.userId) {
+    const payload = verifyAccessToken(token) as JwtPayload;
+    if (!payload.email) {
       res.status(StatusCodes.UNAUTHORIZED).json({ message: 'Invalid token payload' });
       return;
     }
 
-    req.user = { userId: payload.userId };
+    req.user = { userId: payload.userId, email: payload.email };
 
     next();
   } catch {
