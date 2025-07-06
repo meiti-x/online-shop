@@ -2,6 +2,12 @@ generator client {
   provider = "prisma-client-js"
 }
 
+generator dbml {
+  provider = "prisma-dbml-generator"
+  output   = "./dbml/schema.dbml"
+}
+
+
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
@@ -15,3 +21,64 @@ model User {
   email String @unique
   password String 
 }
+model Category {
+  id         Int                  @id @default(autoincrement())
+  name       String               @unique
+  products   Product[]
+  attributes CategoryAttribute[]
+}
+
+model CategoryAttribute {
+  id         Int                  @id @default(autoincrement())
+  name       String              
+  type       String              
+  category   Category             @relation(fields: [categoryId], references: [id])
+  categoryId Int
+  values     ProductAttributeValue[]
+}
+
+model Product {
+  id              Int                  @id @default(autoincrement())
+  productId       String               @unique 
+  title           String
+  description     String
+  categoryId      Int
+  category        Category             @relation(fields: [categoryId], references: [id])
+  images          ProductImage[]
+  prices          ProductPrice[]
+  attributes      ProductAttributeValue[]
+  createdAt       DateTime             @default(now())
+  updatedAt       DateTime             @updatedAt
+}
+
+model ProductImage {
+  id         Int      @id @default(autoincrement())
+  url        String
+  alt        String?
+  product    Product  @relation(fields: [productId], references: [id])
+  productId  Int
+}
+
+model ProductPrice {
+  id         Int      @id @default(autoincrement())
+  product    Product  @relation(fields: [productId], references: [id])
+  productId  Int
+  price      Int      
+  discount   Int?    
+  currency   String   @default("USD")
+  startsAt   DateTime?
+  endsAt     DateTime?
+  createdAt  DateTime @default(now())
+}
+
+
+model ProductAttributeValue {
+  id            Int                 @id @default(autoincrement())
+  product       Product             @relation(fields: [productId], references: [id])
+  productId     Int
+  attribute     CategoryAttribute  @relation(fields: [attributeId], references: [id])
+  attributeId   Int
+  value         String
+}
+
+

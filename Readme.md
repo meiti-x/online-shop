@@ -13,59 +13,67 @@ I’ve added **important comments and TODOs** throughout the code so you can eas
 
 ### 🧱 Architecture
 
-- Repository Pattern (decoupling DB access)
+Repository Pattern  
+Service Layer  
+Shared Utilities (e.g. hashing, ID generation)
 
 ### 📦 ORM & Database
 
-- PostgreSQL
-- Prisma ORM
-  - Abstraction Interface over Prisma
-  - Connection Pooling
-  - Soft decoupling for future DB swap (e.g., MongoDB)
+PostgreSQL  
+Prisma ORM  
+Snowflake ID – sortable, unique 64-bit public IDs  
+Custom Migration Flow – optional → backfill → required  
+Connection Pooling  
+Decoupled DB access for future swapping
 
 ### 📘 DTOs & Validation
 
-- Zod-based DTO validations
-  - Create/Update schema separation
-  - Centralized schema handling
-- Type-safe request parsing for `params`, `body`, and `query`
+Zod  
+Centralized Schemas  
+Type-safe params/body/query parsing
 
 ### 📚 Logging
 
-- Custom Logger Abstraction (`ILogger`)
-- Winston integration
-  - Daily File Rotation (`winston-daily-rotate-file`)
-  - JSON structured logging
-  - Console logging for development
-  - Context-based logging (userId, requestId, etc.)
-  - Request-scoped metadata injection via `AsyncLocalStorage`
-  - Error tracing with full stack info
-  - Response time logging per route
+ILogger abstraction  
+Winston  
+Daily rotate log files  
+JSON logs  
+Console output in dev  
+AsyncLocalStorage (for userId/requestId)  
+Response time tracking  
+Full error stack traces
 
 ### 🔐 Authentication & Security
 
-- JWT-based authentication
-- Middleware for user extraction
-- Request ID generation (`uuid` / `x-request-id`)
-- Brute-force protection with Bloom Filter (email pre-check)
-- Basic rate limiting (optional)
+JWT  
+Auth middleware  
+Request ID (`x-request-id`)  
+Rate Limiting – token-based, backed by Redis  
+Redis – persistent shared store for rate limiter  
+Bloom Filter (for brute-force email check)  
+No internal IDs exposed to client
 
 ### 🔄 API Design
 
-- RESTful routes
-- Modular route registration per domain (e.g., `/v1/auth`)
-- Versioning support
+RESTful versioned endpoints  
+Modular route registration  
+CustomError abstraction  
+Consistent HTTP status codes
+Prisma ERD Generator
+Swagger with use zod scehma for api input(write a script to convert zod to open api)
 
 ### 🐳 Docker & DevOps & DX
 
-- Multi-stage Docker build (dev & prod)
-- Non-root user for production container
-- Docker Compose setup with PostgreSQL service
-- `.env` configuration support
-- Prettier + ESLint config with Husky hooks
-  - Git pre-commit validation
-  - Auto-format and lint staged files
-- Custom Error
+Multi-stage Dockerfile  
+Non-root container  
+Docker Compose  
+.env support  
+Husky hooks  
+ESLint + Prettier  
+Git pre-commit enforcement  
+Prisma CLI + ts-node scripting
+
+---
 
 ## 🚀 Getting Started
 

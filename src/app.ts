@@ -11,6 +11,7 @@ import { setupSwagger } from '@/core/swagger';
 import { authRoutes } from '@auth/routes/auth.routes';
 import { withLogger } from '@middlewares/logger';
 import { withRateLimitMiddleware } from '@middlewares/ratelimmiter';
+import { profileRoutes } from '@profile/routes/profile.routes';
 
 async function initializeAPP() {
   const app: Express = express();
@@ -58,6 +59,7 @@ async function initializeAPP() {
   });
 
   authRoutes(app);
+  profileRoutes(app);
 
   const { PORT } = config;
 
