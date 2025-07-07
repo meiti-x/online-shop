@@ -24,13 +24,13 @@ export function authSignUpController(req: Request, res: Response) {
   authSignUpService(req.body)
     .then((response) => {
       res
-        .cookie('accessToken', generateAccessToken({ userId: response.userId, email: req.body.email }), {
+        .cookie('accessToken', generateAccessToken({ userId: response.userId }), {
           httpOnly: true,
           secure: process.env.NODE_ENV === 'production',
           sameSite: 'strict',
           maxAge: 15 * 60 * 1000, // 15 minutes
         })
-        .cookie('refreshToken', generateRefreshToken({ userId: response.userId, email: req.body.email }), {
+        .cookie('refreshToken', generateRefreshToken({ userId: response.userId }), {
           httpOnly: true,
           secure: process.env.NODE_ENV === 'production',
           sameSite: 'strict',
@@ -66,13 +66,13 @@ export async function authSignInController(req: Request, res: Response) {
     const user = await authSignInService(req?.body.email, req?.body.password);
 
     res
-      .cookie('accessToken', generateAccessToken({ userId: user.userId, email: req.body.email }), {
+      .cookie('accessToken', generateAccessToken({ userId: user.userId }), {
         httpOnly: true,
         secure: process.env.NODE_ENV === 'production',
         sameSite: 'strict',
         maxAge: 15 * 60 * 1000, // 15 minutes
       })
-      .cookie('refreshToken', generateRefreshToken({ userId: user.userId, email: req.body.email }), {
+      .cookie('refreshToken', generateRefreshToken({ userId: user.userId }), {
         httpOnly: true,
         secure: process.env.NODE_ENV === 'production',
         sameSite: 'strict',
@@ -104,12 +104,12 @@ export async function authRefreshTokenController(req: Request, res: Response) {
 
   try {
     const payload = verifyRefreshToken(String(refreshToken));
-    const { userId, email } = payload as { userId: number; email: string };
+    const { userId } = payload as { userId: number; email: string };
 
-    await authRefreshService(req?.body.email);
+    await authRefreshService(userId);
 
-    const newAccessToken = generateAccessToken({ userId, email });
-    const newRefreshToken = generateRefreshToken({ userId, email });
+    const newAccessToken = generateAccessToken({ userId });
+    const newRefreshToken = generateRefreshToken({ userId });
 
     res
       .cookie('accessToken', newAccessToken, {

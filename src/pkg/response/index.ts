@@ -6,9 +6,8 @@ import { CustomError } from '../error';
 interface ISendResponse {
   res: Response;
   statusCode: StatusCodes;
-  data?: object;
+  data?: object | null;
   message?: string;
-  fieldErrors?: Record<string, string[]>;
 }
 
 interface ISendErrorResponse {
@@ -17,17 +16,21 @@ interface ISendErrorResponse {
   fieldErrors?: Record<string, string[]>;
 }
 export function sendResponse(args: ISendResponse) {
-  const { res, statusCode, data, message, fieldErrors } = args;
+  const { res, statusCode, data, message } = args;
 
   res.status(statusCode).json({
     data,
     message,
-    fieldErrors,
   });
 }
 
 export function sendErrorResponse(args: ISendErrorResponse) {
   const { res, err, fieldErrors } = args;
+
+  if (res.headersSent) {
+    console.error('❌ Tried to send error after response already sent');
+    return;
+  }
   if (err instanceof CustomError) {
     res.status(err.statusCode).json({
       message: err.message,
