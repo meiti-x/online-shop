@@ -3,8 +3,8 @@ import swaggerJSDoc from 'swagger-jsdoc';
 import swaggerUi from 'swagger-ui-express';
 
 import { zodTypeToOpenApi } from '@/pkg/zodToOpenapi';
-import { createUserDto } from '@auth/controllers/dto/createUser.dto';
-import { signInDto } from '@auth/controllers/dto/signin.dto';
+import { createUserDto } from '@auth/dto/createUser.dto';
+import { signInDto } from '@auth/dto/signin.dto';
 
 const options: swaggerJSDoc.Options = {
   definition: {

@@ -8,10 +8,10 @@ import { StatusCodes } from 'http-status-codes';
 import { appConfig } from '@/core/configs';
 import { getLogger } from '@/core/logger';
 import { setupSwagger } from '@/core/swagger';
-import { authRoutes } from '@auth/routes/auth.routes';
+import { authRoutes } from '@auth/auth.routes';
 import { withLogger } from '@middlewares/logger';
 import { withRateLimitMiddleware } from '@middlewares/ratelimmiter';
-import { profileRoutes } from '@profile/routes/profile.routes';
+import { profileRoutes } from '@profile/profile.routes';
 
 async function initializeAPP() {
   const app: Express = express();
