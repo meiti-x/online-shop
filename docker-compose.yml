@@ -1,0 +1,12 @@
+version: '3.8'
+services:
+  redis-stack:
+    image: redis/redis-stack-server:latest
+    ports:
+      - 6379:6379
+    restart: unless-stopped
+    volumes:
+      - redis-data:/data
+
+volumes:
+  redis-data:
