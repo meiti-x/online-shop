@@ -63,6 +63,7 @@
   "dependencies": {
     "@asteasolutions/zod-to-openapi": "^7.3.4",
     "@prisma/client": "^6.10.1",
+    "@redis/bloom": "^5.6.0",
     "bcrypt": "^6.0.0",
     "biguint-format": "^1.0.2",
     "body-parser": "^2.2.0",

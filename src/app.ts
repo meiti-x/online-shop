@@ -3,6 +3,7 @@ import compression from 'compression';
 import timeout from 'connect-timeout';
 import cookieParser from 'cookie-parser';
 import express, { Express, Request, Response } from 'express';
+import http from 'http';
 import { StatusCodes } from 'http-status-codes';
 
 import { appConfig } from '@/core/configs';
@@ -14,32 +15,56 @@ import { withRateLimitMiddleware } from '@middlewares/ratelimmiter';
 import { profileRoutes } from '@profile/profile.routes';
 
 import { productRoutes } from './apps/product/product.route';
+import { connectDB } from './core/database/prisma';
+import { getRedisClient } from './core/redis';
+import { sendResponse } from './pkg/response';
+
+async function shutdown(server: http.Server) {
+  const logger = getLogger();
+  const redis = getRedisClient();
+
+  logger.info('📦 Shutting down...');
+
+  server.close(async () => {
+    try {
+      logger.info('⛔ Closing server...');
+      await redis.quit();
+      logger.info('🟥 Redis disconnected');
+      const { prisma } = await import('./core/database/prisma');
+      await prisma.$disconnect();
+      logger.info('🟦 Prisma disconnected');
+      process.exit(0);
+    } catch (err: any) {
+      logger.error('❌ Error during shutdown', err);
+      process.exit(1);
+    }
+  });
+}
 
 async function initializeAPP() {
   const app: Express = express();
-  const config = appConfig;
   const logger = getLogger();
+  const config = appConfig;
+
+  try {
+    await connectDB();
+  } catch (err: any) {
+    logger.error('❌ DB connection failed', err);
+    process.exit(1);
+  }
+
+  await getRedisClient();
 
   setupSwagger(app);
 
   app.use(withRateLimitMiddleware);
-
-  // Set a 5-second request timeout globally
   app.use(timeout('5s'));
-
-  // TODO: i must worry about partial failure with redis
   app.use((req, res, next) => {
     if (!req.timedout) next();
   });
-
   app.use(cookieParser());
   app.use(withLogger);
-
   app.use(bodyParser.json());
-
-  // compress or gzip body response
-  // Compression can leak information about secret tokens (e.g. CSRF tokens) via side-channel attacks like BREACH.
-  // Disable compression on sensitive routes (e.g. /csrf, /auth/login).
   app.use(
     compression({
       filter: (req, res) => {
@@ -51,12 +76,14 @@ async function initializeAPP() {
   );
 
   app.get('/health', (_: Request, res: Response) => {
-    const error = new Error('test');
-    logger.error('healthy', error);
-    res.status(StatusCodes.OK).json({
-      status: 'healthy',
-      timestamp: new Date().toISOString(),
-      uptime: process.uptime(),
+    sendResponse({
+      res,
+      data: {
+        timestamp: new Date().toISOString(),
+        uptime: process.uptime(),
+      },
+      message: 'Healthy',
+      statusCode: StatusCodes.OK,
     });
   });
 
@@ -65,10 +92,14 @@ async function initializeAPP() {
   productRoutes(app);
 
   const { PORT } = config;
+  const server = http.createServer(app);
 
-  app.listen(PORT, () => {
-    console.log(`✅ Server running on http://localhost:${PORT}`);
+  server.listen(PORT, () => {
+    logger.info(`✅ Server running on http://localhost:${PORT}`);
   });
+
+  process.on('SIGINT', () => shutdown(server));
+  process.on('SIGTERM', () => shutdown(server));
 }
 
 initializeAPP();
