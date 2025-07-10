@@ -1,16 +1,23 @@
 import { BadRequestError, NotAuthorizedError } from '@/pkg/error';
 import { comparePassword, hashPassword } from '@/pkg/hash';
 import { generateSnowflakeId } from '@/pkg/snowflake';
-import { authRepository } from '@auth/auth.repository';
+import { authRepository, bloomUserRepository } from '@auth/auth.repository';
 import { User } from '@prisma/client';
 
 export async function authSignUpService(user: Omit<User, 'id'>): Promise<User> {
+  const mightHaveEmail = await bloomUserRepository.mightHaveUserEmail(user.email);
+  if (mightHaveEmail) {
+    throw new BadRequestError('Bloom rejected: Email already in use');
+  }
   const existing = await authRepository.findByEmail(user.email);
   if (existing) {
     throw new BadRequestError('Email already in use');
   }
 
   const hashedPassword = await hashPassword(user.password, 10);
+  // add curent user email to bloom
+  bloomUserRepository.addUserEmail(user.email);
+
   const newUser = await authRepository.createUser({
     ...user,
     userId: generateSnowflakeId(),
