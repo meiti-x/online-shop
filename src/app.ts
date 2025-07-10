@@ -13,6 +13,8 @@ import { withLogger } from '@middlewares/logger';
 import { withRateLimitMiddleware } from '@middlewares/ratelimmiter';
 import { profileRoutes } from '@profile/profile.routes';
 
+import { productRoutes } from './apps/product/product.route';
+
 async function initializeAPP() {
   const app: Express = express();
   const config = appConfig;
@@ -60,6 +62,7 @@ async function initializeAPP() {
 
   authRoutes(app);
   profileRoutes(app);
+  productRoutes(app);
 
   const { PORT } = config;
 

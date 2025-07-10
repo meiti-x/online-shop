@@ -15,6 +15,7 @@ module.exports = {
     'import/prefer-default-export': 'off',
     'max-len': ['error', { code: 120 }],
     'prettier/prettier': 'error',
+    '@typescript-eslint/no-explicit-any': 'warn',
     '@typescript-eslint/ban-ts-comment': [
       'error',
       {

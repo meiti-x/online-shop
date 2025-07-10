@@ -12,7 +12,7 @@ interface ISendResponse {
 
 interface ISendErrorResponse {
   res: Response;
-  err: CustomError;
+  err: CustomError | unknown;
   fieldErrors?: Record<string, string[]>;
 }
 export function sendResponse(args: ISendResponse) {

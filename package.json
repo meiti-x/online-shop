@@ -15,7 +15,8 @@
     "prisma:migrate:dev": "prisma migrate dev",
     "prisma:migrate:deploy": "prisma migrate deploy",
     "prisma:generate": "prisma generate",
-    "db:push": "prisma db push"
+    "db:push": "prisma db push",
+    "seed": "ts-node prisma/seeds"
   },
   "keywords": [],
   "author": "",

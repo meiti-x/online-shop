@@ -18,7 +18,8 @@ export const updateProfileSchema = z.object({
       {
         message: 'Password is too weak. Try adding uncommon words, numbers, or symbols.',
       }
-    ),
+    )
+    .optional(),
 });
 
 export type UpdateProfileDto = z.infer<typeof updateProfileSchema>;

@@ -9,50 +9,51 @@ Table User {
   city String [not null, default: 'unknown']
   email String [unique, not null]
   password String [not null]
+  role String [not null, default: 'user']
 }
 
 Table Category {
-  id Int [pk, increment]
+  categoryId String [pk]
   name String [unique, not null]
   products Product [not null]
   attributes CategoryAttribute [not null]
 }
 
 Table CategoryAttribute {
-  id Int [pk, increment]
+  attributeId String [pk]
+  categoryId String [not null]
   name String [not null]
   type String [not null]
   category Category [not null]
-  categoryId Int [not null]
   values ProductAttributeValue [not null]
 }
 
 Table Product {
-  id Int [pk, increment]
-  productId String [unique, not null]
+  productId String [pk]
   title String [not null]
   description String [not null]
-  categoryId Int [not null]
+  categoryId String [not null]
   category Category [not null]
   images ProductImage [not null]
   prices ProductPrice [not null]
   attributes ProductAttributeValue [not null]
+  stock ProductStock
   createdAt DateTime [default: `now()`, not null]
   updatedAt DateTime [not null]
 }
 
 Table ProductImage {
-  id Int [pk, increment]
+  imageId String [pk]
   url String [not null]
   alt String
+  productId String [not null]
   product Product [not null]
-  productId Int [not null]
 }
 
 Table ProductPrice {
-  id Int [pk, increment]
+  priceId String [pk]
+  productId String [not null]
   product Product [not null]
-  productId Int [not null]
   price Int [not null]
   discount Int
   currency String [not null, default: 'USD']
@@ -61,23 +62,34 @@ Table ProductPrice {
   createdAt DateTime [default: `now()`, not null]
 }
 
-Table ProductAttributeValue {
-  id Int [pk, increment]
+Table ProductStock {
+  stockId String [pk]
+  productId String [unique, not null]
   product Product [not null]
-  productId Int [not null]
-  attribute CategoryAttribute [not null]
-  attributeId Int [not null]
-  value String [not null]
+  quantity Int [not null]
+  warehouse String [not null, default: 'default']
+  updatedAt DateTime [not null]
 }
 
-Ref: CategoryAttribute.categoryId > Category.id
+Table ProductAttributeValue {
+  valueId String [pk]
+  productId String [not null]
+  attributeId String [not null]
+  value String [not null]
+  product Product [not null]
+  attribute CategoryAttribute [not null]
+}
 
-Ref: Product.categoryId > Category.id
+Ref: CategoryAttribute.categoryId > Category.categoryId
 
-Ref: ProductImage.productId > Product.id
+Ref: Product.categoryId > Category.categoryId
 
-Ref: ProductPrice.productId > Product.id
+Ref: ProductImage.productId > Product.productId
 
-Ref: ProductAttributeValue.productId > Product.id
+Ref: ProductPrice.productId > Product.productId
 
-Ref: ProductAttributeValue.attributeId > CategoryAttribute.id
+Ref: ProductStock.productId - Product.productId
+
+Ref: ProductAttributeValue.productId > Product.productId
+
+Ref: ProductAttributeValue.attributeId > CategoryAttribute.attributeId

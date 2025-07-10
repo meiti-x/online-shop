@@ -63,6 +63,16 @@ export class NotAuthorizedError extends CustomError {
   }
 }
 
+export class PermissionDeniedError extends CustomError {
+  statusCode = StatusCodes.FORBIDDEN;
+
+  status = 'error';
+
+  constructor(message: string) {
+    super(message);
+  }
+}
+
 export class FileTooLargeError extends CustomError {
   statusCode = StatusCodes.REQUEST_TOO_LONG;
 
