@@ -1,0 +1,9 @@
+ignoredBuiltDependencies:
+  - '@scarf/scarf'
+  - bcrypt
+  - unrs-resolver
+
+onlyBuiltDependencies:
+  - '@prisma/client'
+  - '@prisma/engines'
+  - prisma

@@ -1,8 +1,6 @@
-import { PrismaClient } from '@prisma/client';
+import { prisma } from '@/core/database/prisma';
 
-import { generateSnowflakeId } from '../../src/pkg/snowflake';
-
-const prisma = new PrismaClient();
+import { generateSnowflakeId } from '../../pkg/snowflake';
 
 async function main() {
   // Create Category: Mobile
